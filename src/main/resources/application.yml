@@ -1,0 +1,161 @@
+spring:
+  application:
+    name: moonBI
+  # 默认 dev 环境
+  profiles:
+    active: dev
+  # 支持 swagger3
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+  # session 配置
+  session:
+    # todo 取消注释开启分布式 session（须先配置 Redis）
+    # store-type: redis
+    # 30 天过期
+    timeout: 2592000
+  # 数据库配置
+  # todo 需替换配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3307/moonbi
+    username: root
+    password: 123456
+  # Redisson 配置
+  redisson:
+    database: 1
+    host: 192.168.52.130
+    port: 6379
+    timeout: 5000
+    password: 123321
+  # Redis配置
+  redis:
+    database: 2
+    host: 192.168.52.130
+    port: 6379
+    password: 123321
+    lettuce:
+      pool:
+        max-active: 10
+        max-idle: 10
+        min-idle: 1
+        time-between-eviction-runs: 10s
+  # Elasticsearch 配置
+  # todo 需替换配置，然后取消注释
+  #  elasticsearch:
+  #    uris: http://localhost:9200
+  #    username: root
+  #    password: 123456
+  # 文件上传
+  servlet:
+    multipart:
+      # 大小限制
+      max-file-size: 10MB
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+# RabbitMQ队列、交换机和路由键配置
+mq:
+  exchange:
+    name: bi_exchange
+  queue:
+    name: bi_queue
+  routing:
+    key: bi_routingKey
+  dead-letter:
+    exchange: deadLetterExchange
+    queue: deadLetterQueue
+    routing-key: deadLetterRoutingKey
+
+
+
+server:
+  address: 0.0.0.0
+  port: 8080
+  servlet:
+    context-path: /api
+    # cookie 30 天过期
+    session:
+      cookie:
+        max-age: 2592000
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: isDelete # 全局逻辑删除的实体字段名
+      logic-delete-value: 1 # 逻辑已删除值（默认为 1）
+      logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
+#鱼聪明AI配置
+yuapi:
+  client:
+    access-key: ENC(IXbbWpQ3Rwx2YuKAhwyateXuIn3CG5JLoXIAWj+shZWPvAnPXFy3FatqZGIw/8bVkSOiQ7+aUUSVlWKJ/uKfcKW0v8B/MG5p6s1x0uO8niA=)
+    secret-key: ENC(p+JWE2xeaE65jxD6VmE4x+Zvs9kRC5AjJm3312IrPkTkHKUfbjZ+mRzmlppZhb83AlXAREZpBWbF7AV5iYtgH/c0Dywy3iaLtfvLGYaB7ZY=)
+#🐟聪明AI模型ID
+ai:
+  model:
+    modelId: 1659171950288818178
+#讯飞星火大模型配置
+xfxh:
+  # 服务引擎使用 讯飞星火认知大模型V2.0，如果使用 V1.5 需要将 hostUrl 修改为 https://spark-api.xf-yun.com/v1.1/chat
+  hostUrl: wss://spark-api.xf-yun.com/v3.5/chat
+  # 发送请求时指定的访问领域，如果是 V1.5版本 设置为 general，如果是 V2版本 设置为 generalv2,如果是 V3版本 设置为 generalv3
+  domain: generalv3.5
+  # 核采样阈值。用于决定结果随机性，取值越高随机性越强即相同的问题得到的不同答案的可能性越高。取值 [0,1]
+  temperature: 0.5
+  # 模型回答的tokens的最大长度，V1.5取值为[1,4096]，V2.0取值为[1,8192].
+  maxTokens: 2048
+  # 大模型回复问题的最大响应时长，单位 s
+  maxResponseTime: 30
+  # 允许同时连接大模型的 websocket 数，如果是普通（免费）用户为 2，超过这个数连接响应会报错，具体参考官网。
+  QPS: 2
+  # 用于权限验证，从服务接口认证信息中获取
+  appId: e5461b1a
+  # 用于权限验证，从服务接口认证信息中获取
+  apiSecret: OTUyYjFjZTliMjk0NjQxY2FhMWM2YmVh
+  # 用于权限验证，从服务接口认证信息中获取
+  apiKey: d627b4e65fd03f2a593982de2f50fc5d
+# 微信相关
+wx:
+  # 微信公众平台
+  # todo 需替换配置
+  mp:
+    token: xxx
+    aesKey: xxx
+    appId: xxx
+    secret: xxx
+    config-storage:
+      http-client-type: HttpClient
+      key-prefix: wx
+      redis:
+        host: 127.0.0.1
+        port: 6379
+      type: Memory
+  # 微信开放平台
+  # todo 需替换配置
+  open:
+    appId: xxx
+    appSecret: xxx
+# 对象存储
+# todo 需替换配置
+cos:
+  client:
+    accessKey: xxx
+    secretKey: xxx
+    region: xxx
+    bucket: xxx
+# 配置文件敏感信息加密
+jasypt:
+  encryptor:
+    password: MoonBI
+    Algorithm: PBEWITHHMACSHA512ANDAES_256
+    KeyObtentionIterations: 1000
+    PoolSize: 1
+    ProviderName: SunJCE
+    StringOutputType: base64
+    IvGeneratorName: org.jasypt.iv.RandomIvGenerator
+    SaltGeneratorName: org.jasypt.salt.RandomSaltGenerator
