@@ -8,7 +8,7 @@ import com.yupi.moonBI.exception.BusinessException;
 import com.yupi.moonBI.manager.AIManager;
 import com.yupi.moonBI.model.entity.Chart;
 import com.yupi.moonBI.service.ChartService;
-import com.yupi.moonBI.webSocket.WebSocketServer;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -40,8 +40,8 @@ public class BIMessageConsumer {
     private RabbitTemplate rabbitTemplate;
 
 
-    @Resource
-    WebSocketServer webSocketServer;
+//    @Resource
+//    WebSocketServer webSocketServer;
     /**
      * 接收消息的方法
      *
@@ -98,7 +98,7 @@ public class BIMessageConsumer {
                 handleChartUpdateError(chart.getId(), "更新图表成功状态失败");
             }
             // 消息确认
-            webSocketServer.sendMessage("您的[" + chart.getName() + "]生成成功 , 前往 我的图表 进行查看", new HashSet<>(Arrays.asList(chart.getUserId().toString())));
+//            webSocketServer.sendMessage("您的[" + chart.getName() + "]生成成功 , 前往 我的图表 进行查看", new HashSet<>(Arrays.asList(chart.getUserId().toString())));
 
             channel.basicAck(deliveryTag, false);
         } catch (Exception e) {

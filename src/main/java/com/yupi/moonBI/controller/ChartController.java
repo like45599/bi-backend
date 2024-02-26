@@ -52,6 +52,7 @@ import static com.yupi.moonBI.constant.RedisConstant.CHART_CHCHE_ID;
 @RestController
 @RequestMapping("/chart")
 @Slf4j
+//@CrossOrigin(origins = "http://123.57.241.179:80", allowCredentials = "true")
 public class ChartController {
 
     @Resource

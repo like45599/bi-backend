@@ -2,30 +2,62 @@
 # @author <a href="https://github.com/liyupi">程序员鱼皮</a>
 # @from <a href="https://yupi.icu">编程导航知识星球</a>
 server:
-  port: 8101
+  port: 7890
+  servlet:
+    context-path: /api
+    session:
+      cookie:
+        domain: 123.57.241.179
+        same-site: lax
+        secure: false
 spring:
   # 数据库配置
   # todo 需替换配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/my_db
+    url: jdbc:mysql://123.57.241.179:3306/biMySql
     username: root
     password: 123456
+  # session 失效时间 30 天
+  session:
+    timeout: 2592000
+    store-type: none
   # Redis 配置
   # todo 需替换配置
   redis:
-    database: 1
-    host: localhost
+    database: 0
+    host: 123.57.241.179
     port: 6379
     timeout: 5000
+    password: 123321
+  redisson:
+    database: 1
+    host: 123.57.241.179
+    port: 6379
+    timeout: 5000
+    password: 123321
+  # rabbitmq 信息
+  rabbitmq:
+    host: 123.57.241.179
     password: 123456
+    username: gaolike
+    port: 5672
+    listener:
+      direct:
+        acknowledge-mode: manual
+
   # Elasticsearch 配置
   # todo 需替换配置
-  elasticsearch:
-    uris: http://localhost:9200
-    username: root
-    password: 123456
+#  elasticsearch:
+#    uris: http://localhost:9200
+#    username: root
+#    password: 123456
 mybatis-plus:
   configuration:
     # 生产环境关闭日志
     log-impl: ''
+# 鱼聪明SDK
+yuapi:
+  client:
+    access-key: 2b8wnj1iote0wu7lex0jxe19drfkd7sc
+    secret-key: mrdh7duoxz40e6fkxi6yakkymhrrxjc4

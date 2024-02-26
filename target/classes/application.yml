@@ -1,6 +1,6 @@
 spring:
   application:
-    name: moonBI
+    name: fengBI
   # 默认 dev 环境
   profiles:
     active: dev
@@ -11,9 +11,9 @@ spring:
   # session 配置
   session:
     # todo 取消注释开启分布式 session（须先配置 Redis）
-    # store-type: redis
+    store-type: redis
     # 30 天过期
-    timeout: 60
+    timeout: 2592000
   # 数据库配置
   # todo 需替换配置
   datasource:
@@ -21,16 +21,9 @@ spring:
     url: jdbc:mysql://localhost:3307/moonbi
     username: root
     password: 123456
-  # Redisson 配置
-  redisson:
-    database: 1
-    host: 192.168.52.130
-    port: 6379
-    timeout: 5000
-    password: 123321
   # Redis配置
   redis:
-    database: 2
+    database: 0
     host: 192.168.52.130
     port: 6379
     password: 123321
@@ -40,6 +33,13 @@ spring:
         max-idle: 10
         min-idle: 1
         time-between-eviction-runs: 10s
+  # Redisson 配置
+  redisson:
+    database: 1
+    host: 192.168.52.130
+    port: 6379
+    timeout: 5000
+    password: 123321
   # Elasticsearch 配置
   # todo 需替换配置，然后取消注释
   #  elasticsearch:
@@ -93,8 +93,8 @@ mybatis-plus:
 #鱼聪明AI配置
 yuapi:
   client:
-    access-key: ENC(IXbbWpQ3Rwx2YuKAhwyateXuIn3CG5JLoXIAWj+shZWPvAnPXFy3FatqZGIw/8bVkSOiQ7+aUUSVlWKJ/uKfcKW0v8B/MG5p6s1x0uO8niA=)
-    secret-key: ENC(p+JWE2xeaE65jxD6VmE4x+Zvs9kRC5AjJm3312IrPkTkHKUfbjZ+mRzmlppZhb83AlXAREZpBWbF7AV5iYtgH/c0Dywy3iaLtfvLGYaB7ZY=)
+    access-key: 2b8wnj1iote0wu7lex0jxe19drfkd7sc
+    secret-key: mrdh7duoxz40e6fkxi6yakkymhrrxjc4
 #🐟聪明AI模型ID
 ai:
   model:
@@ -149,13 +149,13 @@ cos:
     region: xxx
     bucket: xxx
 # 配置文件敏感信息加密
-jasypt:
-  encryptor:
-    password: MoonBI
-    Algorithm: PBEWITHHMACSHA512ANDAES_256
-    KeyObtentionIterations: 1000
-    PoolSize: 1
-    ProviderName: SunJCE
-    StringOutputType: base64
-    IvGeneratorName: org.jasypt.iv.RandomIvGenerator
-    SaltGeneratorName: org.jasypt.salt.RandomSaltGenerator
+#jasypt:
+#  encryptor:
+#    password: MoonBI
+#    Algorithm: PBEWITHHMACSHA512ANDAES_256
+#    KeyObtentionIterations: 1000
+#    PoolSize: 1
+#    ProviderName: SunJCE
+#    StringOutputType: base64
+#    IvGeneratorName: org.jasypt.iv.RandomIvGenerator
+#    SaltGeneratorName: org.jasypt.salt.RandomSaltGenerator

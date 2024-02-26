@@ -23,11 +23,11 @@ public class biInitMain {
     public static void main(String[] args) {
         // ConnectionFactory配置
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost"); // 或者是您的RabbitMQ服务器地址
+        factory.setHost("123.57.241.179"); // 或者是您的RabbitMQ服务器地址
         // 如果需要，还可以设置端口、用户名和密码
-        // factory.setPort(5672);
-        // factory.setUsername("guest");
-        // factory.setPassword("guest");
+         factory.setPort(5672);
+         factory.setUsername("gaolike");
+         factory.setPassword("123456");
 
         try (Connection connection = factory.newConnection();
              Channel channel = connection.createChannel()) {
