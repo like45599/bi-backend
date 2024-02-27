@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/aiAssistant")
 @Slf4j
-//@CrossOrigin(origins = "http://123.57.241.179:80", allowCredentials = "true")
+@CrossOrigin(origins = "http://123.57.241.179:80", allowCredentials = "true")
 
 //@CrossOrigin(origins = "http://140.143.151.205:80", allowCredentials = "true")
 public class AiAssitantController {
