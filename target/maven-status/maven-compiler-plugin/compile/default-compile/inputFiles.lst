@@ -1,6 +1,7 @@
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\service\impl\PostFavourServiceImpl.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\bimq\MyMessageConsumer.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\utils\ExcelUtils.java
+D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\config\MongoConfig.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\controller\ChartController.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\controller\AiAssitantController.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\service\impl\SparkServiceImpl.java
@@ -41,6 +42,7 @@ D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\config\Th
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\model\dto\chart\GenChartByAiRequest.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\model\sparkdto\MsgDTO.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\MQConstant\BiMqConstant.java
+D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\config\WebMvcConfig.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\esdao\PostEsDao.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\model\entity\Post.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\bimqConfig\BIMessageConsumer.java
@@ -63,6 +65,7 @@ D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\strategy\
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\model\vo\LoginUserVO.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\common\ResultUtils.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\mapper\UserMapper.java
+D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\model\document\Chart.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\bimqConfig\biInitMain.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\model\dto\chart\ChartAddRequest.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\model\enums\UserRoleEnum.java
@@ -128,5 +131,6 @@ D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\mapper\Po
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\model\sparkdto\ResponseDTO.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\aop\AuthInterceptor.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\model\dto\user\UserUpdateRequest.java
+D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\repository\ChartRepository.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\model\vo\UserVO.java
 D:\Data\项目\bi参考项目\bi-backend\src\main\java\com\yupi\moonBI\model\dto\user\UserQueryRequest.java

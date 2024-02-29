@@ -2,6 +2,7 @@ com\yupi\moonBI\bimq\MyMessageProducerTest.class
 com\yupi\moonBI\service\PostServiceTest.class
 com\yupi\moonBI\mapper\PostFavourMapperTest.class
 com\yupi\moonBI\service\UserServiceTest.class
+com\yupi\moonBI\RedisTest.class
 com\yupi\moonBI\manager\AIManagerTest.class
 com\yupi\moonBI\mapper\ChartMapperTest.class
 com\yupi\moonBI\utils\EasyExcelTest.class

@@ -4,6 +4,7 @@ D:\Data\项目\bi参考项目\bi-backend\src\test\java\com\yupi\moonBI\service\P
 D:\Data\项目\bi参考项目\bi-backend\src\test\java\com\yupi\moonBI\secret\JasyptTest.java
 D:\Data\项目\bi参考项目\bi-backend\src\test\java\com\yupi\moonBI\manager\RedisLimiterManagerTest.java
 D:\Data\项目\bi参考项目\bi-backend\src\test\java\com\yupi\moonBI\mapper\PostMapperTest.java
+D:\Data\项目\bi参考项目\bi-backend\src\test\java\com\yupi\moonBI\RedisTest.java
 D:\Data\项目\bi参考项目\bi-backend\src\test\java\com\yupi\moonBI\service\PostServiceTest.java
 D:\Data\项目\bi参考项目\bi-backend\src\test\java\com\yupi\moonBI\mapper\PostFavourMapperTest.java
 D:\Data\项目\bi参考项目\bi-backend\src\test\java\com\yupi\moonBI\service\PostFavourServiceTest.java

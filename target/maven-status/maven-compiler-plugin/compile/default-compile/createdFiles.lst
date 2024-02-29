@@ -53,6 +53,7 @@ com\yupi\moonBI\model\sparkdto\RequestDTO$HeaderDTO.class
 com\yupi\moonBI\model\sparkdto\ResponseDTO$PayloadDTO$ChoicesDTO.class
 com\yupi\moonBI\model\vo\BIResponse.class
 com\yupi\moonBI\model\sparkdto\ResponseDTO$PayloadDTO$UsageDTO.class
+com\yupi\moonBI\config\MongoConfig.class
 com\yupi\moonBI\service\PostThumbService.class
 com\yupi\moonBI\model\dto\chart\ChartEditRequest.class
 com\yupi\moonBI\service\impl\PostServiceImpl.class
@@ -76,6 +77,7 @@ com\yupi\moonBI\constant\RedisConstant.class
 com\yupi\moonBI\strategy\AsynchronousStrategy.class
 com\yupi\moonBI\model\vo\UserVO.class
 com\yupi\moonBI\manager\AIManager.class
+com\yupi\moonBI\model\document\Chart.class
 com\yupi\moonBI\service\PostService.class
 com\yupi\moonBI\controller\UserController.class
 com\yupi\moonBI\aop\LogInterceptor.class
@@ -118,6 +120,7 @@ com\yupi\moonBI\mq\MultiConsumer.class
 com\yupi\moonBI\service\PostFavourService.class
 com\yupi\moonBI\utils\NetUtils.class
 com\yupi\moonBI\model\entity\AiAssistant.class
+com\yupi\moonBI\repository\ChartRepository.class
 com\yupi\moonBI\model\dto\post\PostEsDTO$1.class
 com\yupi\moonBI\bimq\MyMessageConsumer.class
 com\yupi\moonBI\mapper\PostMapper.class

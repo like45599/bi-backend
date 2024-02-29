@@ -11,9 +11,12 @@ import com.yupi.moonBI.model.dto.chart.GenChartByAiRequest;
 import com.yupi.moonBI.model.entity.Chart;
 import com.yupi.moonBI.model.entity.User;
 import com.yupi.moonBI.model.vo.BIResponse;
+import com.yupi.moonBI.service.ChartService;
 import com.yupi.moonBI.utils.ExcelUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +25,8 @@ import javax.annotation.Resource;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ThreadPoolExecutor; /**
+import java.util.concurrent.ThreadPoolExecutor;
+/**
  * 同步生成图表策略
  */
 @Component("synchronousStrategy")
@@ -34,6 +38,11 @@ public class SynchronousStrategy implements ChartGenerationStrategy {
 
     @Resource
     private AIManager aiManager;
+
+//    @Lazy
+//    @Resource
+//    private ChartService chartService;
+
     @Override
     public BIResponse generateChart(MultipartFile multipartFile, GenChartByAiRequest genChartByAiRequest, User loginUser)  throws FileNotFoundException {
         // 实现同步处理逻辑
@@ -92,11 +101,24 @@ public class SynchronousStrategy implements ChartGenerationStrategy {
         chart.setChartData(csvData);
         chart.setName(name);
         chart.setChartType(chartType);
-        chart.setGenChart(genChart);
-        chart.setGenResult(genResult);
-//        chart.setStatus("succeed");
         chart.setUserId(loginUser.getId());
+//        chart.setGenChart(genChart);
+//        chart.setGenResult(genResult);
+//        chart.setStatus("succeed");
+        // 插入到MongoDB
+        // 创建com.yupi.moonBI.model.document.Chart对象
+        com.yupi.moonBI.model.document.Chart chartDocument = new com.yupi.moonBI.model.document.Chart();
+        // 设置属性
+        BeanUtils.copyProperties(chart, chartDocument);
         int saveResult = chartMapper.insert(chart);
+
+        chartDocument.setChartId(chart.getId());
+        chartDocument.setGenChart(genChart);
+        chartDocument.setGenResult(genResult);
+
+        // 将生成的数据保存到MongoDB
+//        chartService.saveDocument(chartDocument);
+
         ThrowUtils.throwIf(saveResult != 1, ErrorCode.SYSTEM_ERROR, "图表保存失败");
 
         Long chartId = chart.getId();
