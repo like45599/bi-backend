@@ -33,11 +33,6 @@ public class ChartQueryRequest extends PageRequest implements Serializable {
      */
     private String goal;
 
-//    /**
-//     * wait,running,succeed,failed
-//     */
-//    private String status;
-
     /**
      * 图表类型
      */

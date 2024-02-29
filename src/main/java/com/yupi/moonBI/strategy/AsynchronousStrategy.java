@@ -22,8 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
-/**
+import java.util.List; /**
  * 异步生成图表策略
  */
 @Component("AsynchronousStrategy")
@@ -82,8 +81,8 @@ public class AsynchronousStrategy implements ChartGenerationStrategy {
         BIResponse biResponse = new BIResponse();
         biResponse.setChartId(chart.getId());
         return biResponse;
-
-
+        
+        
     }
 
     /**
