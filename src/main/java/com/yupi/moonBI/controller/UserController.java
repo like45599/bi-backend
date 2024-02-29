@@ -43,7 +43,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/user")
 @Slf4j
-@CrossOrigin(origins = "http://123.57.241.179:80", allowCredentials = "true")
+//@CrossOrigin(origins = "http://123.57.241.179:80", allowCredentials = "true")
 
 public class UserController {
 
