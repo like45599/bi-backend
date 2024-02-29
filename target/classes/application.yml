@@ -21,6 +21,12 @@ spring:
     url: jdbc:mysql://localhost:3307/moonbi
     username: root
     password: 123456
+  #MongoDB配置
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: bi
   # Redis配置
   redis:
     database: 0

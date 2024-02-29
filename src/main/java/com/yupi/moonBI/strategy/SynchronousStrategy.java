@@ -7,13 +7,16 @@ import com.yupi.moonBI.constant.ModelConstant;
 import com.yupi.moonBI.exception.ThrowUtils;
 import com.yupi.moonBI.manager.AIManager;
 import com.yupi.moonBI.mapper.ChartMapper;
+import com.yupi.moonBI.model.document.MongoChart;
 import com.yupi.moonBI.model.dto.chart.GenChartByAiRequest;
 import com.yupi.moonBI.model.entity.Chart;
 import com.yupi.moonBI.model.entity.User;
 import com.yupi.moonBI.model.vo.BIResponse;
+import com.yupi.moonBI.repository.ChartRepository;
 import com.yupi.moonBI.utils.ExcelUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +37,10 @@ public class SynchronousStrategy implements ChartGenerationStrategy {
 
     @Resource
     private AIManager aiManager;
+
+    @Resource
+    private ChartRepository chartRepository;
+
     @Override
     public BIResponse generateChart(MultipartFile multipartFile, GenChartByAiRequest genChartByAiRequest, User loginUser)  throws FileNotFoundException {
         // 实现同步处理逻辑
@@ -92,11 +99,22 @@ public class SynchronousStrategy implements ChartGenerationStrategy {
         chart.setChartData(csvData);
         chart.setName(name);
         chart.setChartType(chartType);
-        chart.setGenChart(genChart);
-        chart.setGenResult(genResult);
-//        chart.setStatus("succeed");
         chart.setUserId(loginUser.getId());
+//        chart.setGenChart(genChart);
+//        chart.setGenResult(genResult);
+//        chart.setStatus("succeed");
         int saveResult = chartMapper.insert(chart);
+
+        // 插入到MongoDB
+        MongoChart chartDocument = new MongoChart();
+        BeanUtils.copyProperties(chart, chartDocument);
+
+        chartDocument.setChartId(chart.getId());
+        chartDocument.setGenChart(genChart);
+        chartDocument.setGenResult(genResult);
+        // 保存MongoChart到MongoDB
+        chartRepository.save(chartDocument);
+
         ThrowUtils.throwIf(saveResult != 1, ErrorCode.SYSTEM_ERROR, "图表保存失败");
 
         Long chartId = chart.getId();

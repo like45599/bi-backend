@@ -15,10 +15,12 @@ import com.yupi.moonBI.constant.UserConstant;
 import com.yupi.moonBI.exception.BusinessException;
 import com.yupi.moonBI.exception.ThrowUtils;
 import com.yupi.moonBI.manager.RedisLimiterManager;
+import com.yupi.moonBI.model.document.MongoChart;
 import com.yupi.moonBI.model.dto.chart.*;
 import com.yupi.moonBI.model.entity.Chart;
 import com.yupi.moonBI.model.entity.User;
 import com.yupi.moonBI.model.vo.BIResponse;
+import com.yupi.moonBI.repository.ChartRepository;
 import com.yupi.moonBI.service.ChartService;
 import com.yupi.moonBI.service.UserService;
 import com.yupi.moonBI.utils.ExcelUtils;
@@ -70,6 +72,8 @@ public class ChartController {
     @Resource
     private BIMessageProducer biMessageProducer;
 
+    @Resource
+    private ChartRepository chartRepository;
 
     // region 增删改查
 
@@ -158,6 +162,12 @@ public class ChartController {
         if (chart == null) {
             throw new BusinessException(NOT_FOUND_ERROR);
         }
+        // 从MongoDB获取genChart和genResult
+        MongoChart mongoChart = chartRepository.findByChartId(chart.getId());
+        if (mongoChart != null) {
+            chart.setGenChart(mongoChart.getGenChart());
+            chart.setGenResult(mongoChart.getGenResult());
+        }
         return ResultUtils.success(chart);
     }
 
@@ -227,8 +237,19 @@ public class ChartController {
         long size = chartQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+
         Page<Chart> chartPage = chartService.page(new Page<>(current, size),
                 getQueryWrapper(chartQueryRequest));
+
+        // 遍历chartPage中的每个Chart对象，从MongoDB获取genChart和genResult
+        chartPage.getRecords().forEach(chart -> {
+            // 从MongoDB获取genChart和genResult
+            MongoChart mongoChart = chartRepository.findByChartId(chart.getId());
+            if (mongoChart != null) {
+                chart.setGenChart(mongoChart.getGenChart());
+                chart.setGenResult(mongoChart.getGenResult());
+            }
+        });
         return ResultUtils.success(chartPage);
     }
 

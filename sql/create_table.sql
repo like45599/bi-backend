@@ -27,7 +27,7 @@ create table if not exists user
 
 
 -- 数据信息表
-create table chart
+create table mongoChart
 (
     id          bigint auto_increment comment 'id'
         primary key,
