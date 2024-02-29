@@ -25,10 +25,13 @@ import com.yupi.moonBI.service.ChartService;
 import com.yupi.moonBI.service.UserService;
 import com.yupi.moonBI.utils.ExcelUtils;
 import com.yupi.moonBI.utils.SqlUtils;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,7 +57,7 @@ import static com.yupi.moonBI.constant.RedisConstant.CHART_CHCHE_ID;
 @RestController
 @RequestMapping("/chart")
 @Slf4j
-@CrossOrigin(origins = "http://123.57.241.179:80", allowCredentials = "true")
+//@CrossOrigin(origins = "http://123.57.241.179:80", allowCredentials = "true")
 public class ChartController {
 
     @Resource
@@ -204,6 +207,8 @@ public class ChartController {
         Page<Chart> chartPage = chartService.page(new Page<>(current, size),
                 getQueryWrapper(chartQueryRequest));
         return ResultUtils.success(chartPage);
+//        Page<com.yupi.moonBI.model.document.Chart> charts = (Page<com.yupi.moonBI.model.document.Chart>) chartService.getChartList(chartQueryRequest);
+//        return ResultUtils.success(charts);
     }
 
     /**
@@ -251,6 +256,9 @@ public class ChartController {
             }
         });
         return ResultUtils.success(chartPage);
+//        Pageable pageable = PageRequest.of((int)current - 1, (int)size);
+//        org.springframework.data.domain.Page<com.yupi.moonBI.model.document.Chart> chartPage = chartRepository.findAllByUserId(loginUser.getId(), pageable);
+//        return ResultUtils.success(chartPage);
     }
 
     // endregion
@@ -450,6 +458,25 @@ public class ChartController {
         BIResponse biResponse = new BIResponse();
         biResponse.setChartId(newChartId);
         return ResultUtils.success(biResponse);
+    }
+
+    /**
+     * 根据 id 获取
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("/getMongo")
+    @Operation(summary = "通过chartId获取图表")
+    public BaseResponse<com.yupi.moonBI.model.document.Chart> getChartEntityById(long id) {
+        if (id <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        com.yupi.moonBI.model.document.Chart chart = chartService.getChartByChartId(id);
+        if (chart == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        return ResultUtils.success(chart);
     }
 
     /**

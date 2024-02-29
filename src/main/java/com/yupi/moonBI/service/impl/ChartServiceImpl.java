@@ -1,5 +1,6 @@
 package com.yupi.moonBI.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
@@ -15,11 +16,13 @@ import com.yupi.moonBI.exception.ThrowUtils;
 import com.yupi.moonBI.manager.AIManager;
 import com.yupi.moonBI.manager.RedisLimiterManager;
 import com.yupi.moonBI.mapper.ChartMapper;
+import com.yupi.moonBI.model.dto.chart.ChartQueryRequest;
 import com.yupi.moonBI.model.dto.chart.ChartTask;
 import com.yupi.moonBI.model.dto.chart.GenChartByAiRequest;
 import com.yupi.moonBI.model.entity.Chart;
 import com.yupi.moonBI.model.entity.User;
 import com.yupi.moonBI.model.vo.BIResponse;
+import com.yupi.moonBI.repository.ChartRepository;
 import com.yupi.moonBI.service.ChartService;
 import com.yupi.moonBI.strategy.ChartGenerationStrategy;
 import com.yupi.moonBI.utils.ExcelUtils;
@@ -28,6 +31,10 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,10 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -79,6 +83,12 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
 
     @Resource
     private AIManager aiManager;
+
+    @Resource
+    ChartRepository chartRepository;
+
+    @Resource
+    MongoTemplate mongoTemplate;
 
     @Autowired
     private Map<String, ChartGenerationStrategy> strategies;
@@ -192,6 +202,7 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
         // 日志记录，便于调试和监控
         log.info("CPU Usage: {}%, Memory Usage: {}%", cpuUsage, memoryUsage);
 
+        // 根据CPU和内存使用率选择生成图表的策略
         ChartGenerationStrategy strategy;
         if (cpuUsage < 70 && memoryUsage < 70) {
             // 如果CPU和内存使用率都低于70%，使用同步策略处理
@@ -531,6 +542,135 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
     }
 
     /**
+     * MongoDB存储图表数据   不包含更新版本号功能
+     */
+    @Override
+    public boolean saveDocument(com.yupi.moonBI.model.document.Chart chart) {
+        try {
+            // 使用封装好的save方法来保存文档
+            chartRepository.save(chart);
+            return true;
+        } catch (Exception e) {
+            // 日志记录异常信息
+            log.error("Error saving document: {}", chart, e);
+            return false;
+        }
+//        log.debug("Saving document: {}", chart);
+//        Long chartId = chart.getChartId();
+//        List<com.yupi.moonBI.model.document.Chart> charts = chartRepository.findAllByChartId(chartId);
+//        if (charts != null) {
+//            // 逻辑处理
+//        } else {
+//            log.error("charts is null for chartId: {}", chartId);
+//        }
+//        if (charts.size() != 0) {
+//            return updateDocument(chart);
+//        } else {
+//            com.yupi.moonBI.model.document.Chart save = chartRepository.save(chart);
+//            return true;
+//        }
+    }
+
+    @Override
+    public boolean syncChart(Chart chartEntity, String genChart, String genResult) {
+        com.yupi.moonBI.model.document.Chart chart = BeanUtil.copyProperties(chartEntity, com.yupi.moonBI.model.document.Chart.class);
+        chart.setGenChart(genChart);
+        chart.setGenResult(genResult);
+        chart.setChartId(chartEntity.getId());
+        Long chartId = chart.getChartId();
+        List<com.yupi.moonBI.model.document.Chart> charts = chartRepository.findAllByChartId(chartId);
+        if (charts.size() != 0) {
+            return updateDocument(chart);
+        } else {
+            chart.setVersion(1);
+            com.yupi.moonBI.model.document.Chart save = chartRepository.save(chart);
+            return true;
+        }
+    }
+
+//    @Override
+//    public List<com.yupi.moonBI.model.document.Chart> listDocuments(long userId) {
+//        return chartRepository.findAllByUserId(userId, PageRequest.of(3, 1));
+//    }
+
+    @Override
+    public Page<com.yupi.moonBI.model.document.Chart> getChartList(ChartQueryRequest chartQueryRequest) {
+        // page size
+        // 页号 每一页的大小
+        // 这个API的页号是从0开始的
+        // 默认按照时间降序
+        PageRequest pageRequest = PageRequest.of(Math.toIntExact(chartQueryRequest.getCurrent() - 1), (int) chartQueryRequest.getPageSize(), Sort.by("creatTime").descending());
+        Long userId = chartQueryRequest.getUserId();
+        String name = chartQueryRequest.getName();
+        // 查找符合搜索名称的chart
+        if (StringUtils.isNotBlank(name)) {
+            // . 可以重复 0~n次 , 匹配所有满足的name
+            String regex = ".*" + name + ".*";
+            Query query = new Query();
+            query.addCriteria(Criteria.where("userId").is(userId).and("name").regex(regex));
+            query.with(pageRequest);
+            List<com.yupi.moonBI.model.document.Chart> charts = mongoTemplate.find(query, com.yupi.moonBI.model.document.Chart.class);
+            return excludeOldVersionAndBuildPage(charts, pageRequest);
+        } else {
+            List<com.yupi.moonBI.model.document.Chart> charts = (List<com.yupi.moonBI.model.document.Chart>) chartRepository.findAllByUserId(userId, pageRequest);
+            return excludeOldVersionAndBuildPage(charts, pageRequest);
+        }
+    }
+
+    @Override
+    public com.yupi.moonBI.model.document.Chart getChartByChartId(long chartId) {
+        return chartRepository.findByChartId(chartId);
+    }
+
+    @Override
+    public boolean insertChart(Chart chartEntity) {
+        try {
+            com.yupi.moonBI.model.document.Chart chart = BeanUtil.copyProperties(chartEntity, com.yupi.moonBI.model.document.Chart.class);
+            chart.setChartId(chartEntity.getId());
+            chart.setVersion(com.yupi.moonBI.model.document.Chart.DEFAULT_VERSION);
+            long chartId = chart.getChartId();
+            Query query = new Query();
+            query.addCriteria(Criteria.where("chartId").is(chartId));
+            List<com.yupi.moonBI.model.document.Chart> charts = mongoTemplate.find(query, com.yupi.moonBI.model.document.Chart.class);
+            // 是新的图表
+            if (charts.size() == 0) {
+                chartRepository.save(chart);
+            }
+            return true;
+        } catch (RuntimeException e) {
+            log.error("保存Chart到MongoDB失败 : {} , 异常信息:{} ", chartEntity, e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteAllFromMongo(long id) {
+        return chartRepository.deleteAllByChartId(id) != -1;
+    }
+
+    @Override
+    public boolean updateDocument(com.yupi.moonBI.model.document.Chart chart) {
+        // 不设置ID ,使用MongoDB自动的ObjectId
+        try {
+            Query query = new Query();
+            query.addCriteria(Criteria.where("chartId").is(chart.getChartId()));
+            com.yupi.moonBI.model.document.Chart existingChart = mongoTemplate.findOne(query, com.yupi.moonBI.model.document.Chart.class);
+            if (existingChart != null) {
+                chart.setId(existingChart.getId());
+            }
+            mongoTemplate.save(chart);
+            return true;
+        } catch (RuntimeException e) {
+            log.error("更新文档失败: {},{}", e, chart);
+            return false;
+        }
+    }
+
+
+
+
+
+    /**
      * 校验文件
      *
      * @param multipartFile
@@ -564,7 +704,26 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
         }
     }
 
-
+    /**
+     * 排除旧版本和构建返回Page
+     *
+     * @param charts   图表
+     * @param pageable 可分页
+     * @return {@link Page}<{@link Chart}>
+     */
+    private Page<com.yupi.moonBI.model.document.Chart> excludeOldVersionAndBuildPage(List<com.yupi.moonBI.model.document.Chart> charts, Pageable pageable) {
+        long count = chartRepository.count();
+        // 排除旧版本号Chart
+        Map<Long, com.yupi.moonBI.model.document.Chart> latestChartsMap = new HashMap<>();
+        for (com.yupi.moonBI.model.document.Chart chart : charts) {
+            Long chartId = chart.getChartId();
+            // 当chartId 相同时 , 获取version较大的chart
+            if (!latestChartsMap.containsKey(chartId)) {
+                latestChartsMap.put(chartId, chart);
+            }
+        }
+        return new PageImpl<>(new ArrayList<>(latestChartsMap.values()), pageable, count);
+    }
 
 }
 

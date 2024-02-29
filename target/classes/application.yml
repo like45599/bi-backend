@@ -62,7 +62,11 @@ spring:
     port: 5672
     username: guest
     password: guest
-
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: bi
 # RabbitMQ队列、交换机和路由键配置
 mq:
   exchange:

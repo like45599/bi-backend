@@ -2,10 +2,12 @@ package com.yupi.moonBI.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.yupi.moonBI.model.dto.chart.ChartQueryRequest;
 import com.yupi.moonBI.model.dto.chart.GenChartByAiRequest;
 import com.yupi.moonBI.model.entity.Chart;
 import com.yupi.moonBI.model.entity.User;
 import com.yupi.moonBI.model.vo.BIResponse;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
@@ -85,4 +87,73 @@ public interface ChartService extends IService<Chart> {
      * @throws FileNotFoundException
      */
 
+
+    /**
+     * MongoDB存储图表数据   不包含更新版本号功能
+     */
+
+    /**
+     * 保存chart文档 : 当存在旧版本时自动设置为newVersion
+     *
+     * @param chart 图表
+     * @return boolean
+     */
+    boolean saveDocument(com.yupi.moonBI.model.document.Chart chart);
+
+    /**
+     * 同步com.yupi.moonBI.model.document.Chart数据到MongoDB
+     *
+     * @param chartEntity 表实体
+     * @return boolean
+     */
+    boolean syncChart(Chart chartEntity, String genChart ,String genResult);
+
+    /**
+     * 列表文件
+     *
+     * @param userId 用户id
+     * @return {@link List}<{@link com.yupi.moonBI.model.document.Chart}>
+     */
+//    List<com.yupi.moonBI.model.document.Chart> listDocuments(long userId);
+
+    /**
+     * 查询图表Document
+     *
+     * @param chartQueryRequest 图查询请求
+     * @return {@link Page}<{@link com.yupi.moonBI.model.document.Chart}>
+     */
+    Page<com.yupi.moonBI.model.document.Chart> getChartList(ChartQueryRequest chartQueryRequest);
+
+    /**
+     * 通过com.yupi.moonBI.model.document.ChartId 获取 com.yupi.moonBI.model.document.Chart(latest version)
+     *
+     * @param chartId 表id
+     * @return {@link com.yupi.moonBI.model.document.Chart}
+     */
+    com.yupi.moonBI.model.document.Chart getChartByChartId(long chartId);
+
+    /**
+     * 插入com.yupi.moonBI.model.document.Chart
+     *
+     * @param chartEntity 表实体
+     * @return boolean
+     */
+    boolean insertChart(Chart chartEntity);
+
+    /**
+     * 从mongo删除com.yupi.moonBI.model.document.Chart
+     *
+     * @param id id
+     * @return boolean
+     */
+    boolean deleteAllFromMongo(long id);
+
+
+    /**
+     * 从mongo更新com.yupi.moonBI.model.document.Chart : 创建新的版本
+     *
+     * @param chart 图表
+     * @return boolean
+     */
+    boolean updateDocument(com.yupi.moonBI.model.document.Chart chart);
 }

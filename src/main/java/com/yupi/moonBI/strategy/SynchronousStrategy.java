@@ -25,7 +25,8 @@ import javax.annotation.Resource;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ThreadPoolExecutor; /**
+import java.util.concurrent.ThreadPoolExecutor;
+/**
  * 同步生成图表策略
  */
 @Component("synchronousStrategy")
